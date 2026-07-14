@@ -1,7 +1,7 @@
 {
-    "name": "@robert.tools/sample",
+    "name": "@robert.tools/fs",
     "version": "1.0.0",
-    "description": "A sample package",
+    "description": "A package to provide tooling for interactions with the file system.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
@@ -19,16 +19,17 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/robert-tools/sample.git"
+        "url": "git+https://github.com/robert-tools/fs.git"
     },
     "bugs": {
-        "url": "https://github.com/robert-tools/sample/issues"
+        "url": "https://github.com/robert-tools/fs/issues"
     },
-    "homepage": "https://github.com/robert-tools/sample#readme",
+    "homepage": "https://github.com/robert-tools/fs#readme",
     "keywords": [
         "typescript",
         "node",
-        "sample",
+        "fs",
+        "filesystem",
         "robert.tools"
     ],
     "author": "Robert Willemelis",

@@ -1,17 +1,10 @@
-# @robert.tools/sample
+# @robert.tools/fs
 
-A sample package for robert.tools.
+A package to provide tooling for interactions with the file system.
 
 ## Installation
 
 ```bash
-npm install @robert.tools/sample
+npm install @robert.tools/fs
 ```
 
-## Usage
-
-```typescript
-import { sample } from '@robert.tools/sample';
-
-sample('hello'); // 'sample: hello'
-```
