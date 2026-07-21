@@ -46,6 +46,18 @@ const readFilesRecursively = (
     return fileList;
 };
 
+const move = (oldPath: string, newPath: string, type: string): void => {
+    if (!FS.hasFolder(oldPath)) {
+        LOG.WARN(`Old ${type} does not exist: ${oldPath}`);
+        return;
+    }
+    const newFolder = FS.getFolder(newPath);
+    if (!FS.hasFolder(newFolder)) {
+        FS.createFolder(newFolder);
+    }
+    fs.renameSync(oldPath, newPath);
+};
+
 export class FS {
     /**
      * 🎯 Checks if a file or folder exists at the specified path.
@@ -55,8 +67,21 @@ export class FS {
     static exists = (path: string): boolean => {
         return fs.existsSync(path);
     };
-    static hasFolder = FS.exists; // alias for consistency
-    static hasFile = FS.exists; // alias for consistency
+    /**
+     * 🎯 Checks if a folder exists at the specified path.
+     * @see FS.exists alias for consistency
+     * @param {string} folder ➡️ The path to check for existence.
+     * @returns {boolean} 📤 True if the folder exists, false otherwise.
+     */
+    static hasFolder = FS.exists;
+
+    /**
+     * 🎯 Checks if a file exists at the specified path.
+     * @see FS.exists alias for consistency
+     * @param {string} file ➡️ The path to check for existence.
+     * @returns {boolean} 📤 True if the file exists, false otherwise.
+     */
+    static hasFile = FS.exists;
 
     /**
      * 🎯 Extracts the file name from a given file path.
@@ -118,20 +143,35 @@ export class FS {
 
     /**
      * 🎯 Moves a folder from an old path to a new path, creating the new folder if it does not exist.
+     * @see move alias for consistency
      * @param {string} oldFolder ➡️ The current path of the folder to move.
      * @param {string} newFolder ➡️ The new path where the folder should be moved.
      * @returns {void}
      */
-    static moveFolder(oldFolder: string, newFolder: string): void {
-        if (!FS.hasFolder(oldFolder)) {
-            LOG.WARN(`Old folder does not exist: ${oldFolder}`);
-            return;
-        }
-        if (!FS.hasFolder(newFolder)) {
-            FS.createFolder(newFolder);
-        }
-        fs.renameSync(oldFolder, newFolder);
-    }
+    static moveFolder = (oldFolder: string, newFolder: string): void => {
+        move(oldFolder, newFolder, 'folder');
+    };
+
+    /**
+     * 🎯 Moves a file from an old path to a new path, creating the new folder if it does not exist.
+     * @see move alias for consistency
+     * @param {string} oldFile ➡️ The current path of the file to move.
+     * @param {string} newFile ➡️ The new path where the file should be moved.
+     * @returns {void}
+     */
+    static moveFile = (oldFile: string, newFile: string): void => {
+        move(oldFile, newFile, 'file');
+    };
+
+    /**
+     * 🎯 Moves a file or folder from an old path to a new path, creating the new folder if it does not exist.
+     * @param {string} oldPath ➡️ The current path of the file or folder to move.
+     * @param {string} newPath ➡️ The new path where the file or folder should be moved.
+     * @returns {void}
+     */
+    static move = (oldPath: string, newPath: string): void => {
+        move(oldPath, newPath, 'path');
+    };
 
     /**
      * 🎯 Reads the content of a file at the specified path.

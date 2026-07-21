@@ -222,6 +222,63 @@ describe('CLASS: FS', () => {
             expect(isExisting(NEW_FOLDER)).toEqual(false);
         });
     });
+    describe('✅ moveFile()', () => {
+        const FN = FS.moveFile;
+        const OLD_FILE: string = 'oldFile.txt';
+        const NEW_FILE: string = 'newFile.txt';
+        describe('same folder', () => {
+            beforeEach(() => {
+                mock({ [OLD_FILE]: 'var' });
+            });
+            it('should move an existing file to a new location', () => {
+                expect(isExisting(OLD_FILE)).toEqual(true);
+                FN(OLD_FILE, NEW_FILE);
+                expect(isExisting(OLD_FILE)).toEqual(false);
+                expect(isExisting(NEW_FILE)).toEqual(true);
+            });
+            it('should not throw an error if the old file does not exist', () => {
+                const NON_EXISTING_FILE = 'notexisting.txt';
+                expect(isExisting(NON_EXISTING_FILE)).toEqual(false);
+                FN(NON_EXISTING_FILE, NEW_FILE);
+                expect(isExisting(NON_EXISTING_FILE)).toEqual(false);
+                expect(isExisting(NEW_FILE)).toEqual(false);
+            });
+        });
+        describe('different folder', () => {
+            const OLD_FILE_PATH: string = 'oldFolder/oldFile.txt';
+            const NEW_FILE_PATH: string = 'newFolder/newFile.txt';
+            beforeEach(() => {
+                mock({ oldFolder: { 'oldFile.txt': 'var' } });
+            });
+            it('should move an existing file to a new location in a different folder', () => {
+                expect(isExisting(OLD_FILE_PATH)).toEqual(true);
+                FN(OLD_FILE_PATH, NEW_FILE_PATH);
+                expect(isExisting(OLD_FILE_PATH)).toEqual(false);
+                expect(isExisting(NEW_FILE_PATH)).toEqual(true);
+            });
+            it('should not throw an error if the old file does not exist', () => {
+                const NON_EXISTING_FILE = 'notexisting.txt';
+                expect(isExisting(NON_EXISTING_FILE)).toEqual(false);
+                FN(NON_EXISTING_FILE, NEW_FILE_PATH);
+                expect(isExisting(NON_EXISTING_FILE)).toEqual(false);
+                expect(isExisting(NEW_FILE_PATH)).toEqual(false);
+            });
+        });
+    });
+    describe('✅ move()', () => {
+        const FN = FS.move;
+        const OLD_PATH: string = 'oldFolder/oldFile.txt';
+        const NEW_PATH: string = 'newFolder/newFile.txt';
+        beforeEach(() => {
+            mock({ oldFolder: { 'oldFile.txt': 'var' } });
+        });
+        it('should move an existing file to a new location', () => {
+            expect(isExisting(OLD_PATH)).toEqual(true);
+            FN(OLD_PATH, NEW_PATH);
+            expect(isExisting(OLD_PATH)).toEqual(false);
+            expect(isExisting(NEW_PATH)).toEqual(true);
+        });
+    });
     describe('✅ readFile()', () => {
         const FN = FS.readFile;
         it('should read a file with utf8 encoding', () => {
