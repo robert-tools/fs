@@ -174,6 +174,17 @@ export class FS {
     };
 
     /**
+     * 🎯 Renames a file or folder from an old path to a new path, creating the new folder if it does not exist
+     * @see move alias for consistency
+     * @param {string} oldPath ➡️ The current path of the file or folder to rename.
+     * @param {string} newPath ➡️ The new path where the file or folder should be renamed.
+     * @returns {void}
+     */
+    static rename = (oldPath: string, newPath: string): void => {
+        move(oldPath, newPath, 'path');
+    };
+
+    /**
      * 🎯 Reads the content of a file at the specified path.
      * @param {string} path
      * @param options ➡️ Options for reading the file. Supported options:

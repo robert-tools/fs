@@ -279,6 +279,20 @@ describe('CLASS: FS', () => {
             expect(isExisting(NEW_PATH)).toEqual(true);
         });
     });
+    describe('✅ rename()', () => {
+        const FN = FS.rename;
+        const OLD_PATH: string = 'oldFolder/oldFile.txt';
+        const NEW_PATH: string = 'oldFolder/newFile.txt';
+        beforeEach(() => {
+            mock({ oldFolder: { 'oldFile.txt': 'var' } });
+        });
+        it('should rename an existing file to a new name in the same folder', () => {
+            expect(isExisting(OLD_PATH)).toEqual(true);
+            FN(OLD_PATH, NEW_PATH);
+            expect(isExisting(OLD_PATH)).toEqual(false);
+            expect(isExisting(NEW_PATH)).toEqual(true);
+        });
+    });
     describe('✅ readFile()', () => {
         const FN = FS.readFile;
         it('should read a file with utf8 encoding', () => {
