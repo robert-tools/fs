@@ -189,7 +189,7 @@ export class FS {
      * @param {string} path
      * @param options ➡️ Options for reading the file. Supported options:
      *                  - encoding: The encoding to use (default is 'utf8').
-     *                  - noFixJSON: If true, does not attempt to fix JSON formatting.
+     *                  - returnType: 'string' (default) returns the content as a string, 'json' parses the content as JSON.
      * @returns {string | object | undefined} 📤 The content of the file as a string or parsed JSON object.
      */
     static readFile(
@@ -202,10 +202,11 @@ export class FS {
         try {
             const isJSON = path.indexOf('.json') !== -1;
             const fileStream = fs.readFileSync(path);
-            const noFixJSON = options['noFixJSON'] ?? false;
+            const returnType = options['returnType'] ?? 'string';
+            // const noFixJSON = options['noFixJSON'] ?? false;
             const str = fileStream.toString();
             if (isJSON) {
-                if (noFixJSON) {
+                if (returnType === 'json') {
                     data = JSON.parse(str);
                 } else {
                     data = str; // default to string

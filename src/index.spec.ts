@@ -299,9 +299,13 @@ describe('CLASS: FS', () => {
             const content = FN('tmp/file.txt');
             expect(content).toEqual('xx');
         });
-        it('should read a JSON file and parse it', () => {
+        it('should read a JSON file and not parse it', () => {
             const content = FN('tmp/file.json');
             expect(content).toEqual('{ "xxx": 2}');
+        });
+        it('should read a JSON file and parse it', () => {
+            const content = FN('tmp/file.json', { returnType: 'json' });
+            expect(content).toEqual({ xxx: 2 });
         });
         xit('should read a file with invalid JSON key and parse it', () => {
             const content = FN('tmp/invalidKey.json');
@@ -607,7 +611,7 @@ describe('CLASS: FS', () => {
         it('size of file', () => {
             expect(FN(`notexitst`)).toEqual(0);
             expect(FN(`tmp/file.txt`)).toEqual(2);
-            expect(FN(`tmp/file.json`)).toEqual(9);
+            expect(FN(`tmp/file.json`)).toEqual(11);
         });
     });
 });
