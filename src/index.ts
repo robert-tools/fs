@@ -2,8 +2,8 @@
  * 🎯 A utility class for file system operations, providing methods to manage files and directories.
  * @module backend/_shared/FS
  * @example FS.createFolder('./data');
- * @version 0.0.1
- * @date 2026-09-18
+ * @version 1.1.2
+ * @date 2026-07-23
  * @license MIT
  * @author Robert Willemelis <github.com/willi84>
  */
@@ -87,12 +87,16 @@ export class FS {
      * 🎯 Extracts the file name from a given file path.
      * @todo Handle files without extensions
      * @param {string} filePath ➡️ The full path of the file.
-     * @returns {string} 📤 The file name extracted from the path.
+     * @returns {string} 📤 The file name extracted from the path or ''
      */
     static getFileName = (filePath: string): string => {
         const parts = filePath.split('/');
         const filename = parts[parts.length - 1];
-        return filename.indexOf('.') !== -1 ? filename : ''; // TODO: files without extension
+        const isFile = FS.isFile(filePath);
+        if (isFile) {
+            return filename;
+        }
+        return ''; // no file
     };
 
     /**
@@ -118,16 +122,56 @@ export class FS {
     }
 
     /**
+     * 🎯 Checks if the given path is a file.
+     * @param {string} file ➡️ The path to check.
+     * @returns {boolean} 📤 True if the path is a file, false otherwise.
+     */
+    static isFile(file: string): boolean {
+        const isFile = FS.exists(file) && fs.statSync(file).isFile();
+        if (isFile) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 🎯 Checks if the given path is a folder.
+     * @param {string} folder ➡️ The path to check.
+     * @returns {boolean} 📤 True if the path is a folder, false otherwise.
+     */
+    static isFolder(folder: string): boolean {
+        const isFolder = FS.exists(folder) && fs.statSync(folder).isDirectory();
+        if (isFolder) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
      * 🎯 Extracts the folder path from a given file path.
      * @param {string} file ➡️ The full path of the file.
      * @returns {string} 📤 The folder path extracted from the file path.
      */
     static getFolder(file: string): string {
         const parts = file.split('/');
-        const filename = parts[parts.length - 1];
-        const replaceable = filename.indexOf('.') !== -1 ? filename : '';
-        const folder = file.replace(replaceable, '');
-        return folder.replace(/\/$/, ''); // Remove trailing slash if exists
+        const isFile = FS.isFile(file);
+        if (isFile) {
+            const filename = parts[parts.length - 1];
+            const replaceable = filename.indexOf('.') !== -1 ? filename : '';
+            const folder = file.replace(replaceable, '');
+            return folder.replace(/\/$/, ''); // Remove trailing slash if exists
+        } else if (FS.isFolder(file)) {
+            return file.replace(/\/$/, ''); // Remove trailing slash if exists
+        } else {
+            const isFilePath = parts[parts.length - 1].indexOf('.') !== -1;
+            let result = file;
+            if (isFilePath) {
+                const filename = parts[parts.length - 1];
+                result = file.replace(filename, '');
+            }
+            return result.replace(/\/$/, ''); // Remove trailing slash if exists
+        }
     }
 
     /**

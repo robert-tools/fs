@@ -2,7 +2,7 @@
     "$schema": "https://willi84.github.io/project-tracking-record/project.schema.json",
     "🗂️ name": "@robert.tools/fs",
     "🎯 goal": "A package to provide tooling for interactions with the file system.",
-    "🔖 version": "1.1.1",
+    "🔖 version": "1.1.2",
     "📄 id": "ROB-006",
     "⚖️ license": "MIT",
     "👩 author": "Robert Willemelis",

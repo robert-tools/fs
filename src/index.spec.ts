@@ -1,8 +1,8 @@
 /**
  * 🧪 Testing module FS
  * @module backend/_shared/FS
- * @version 0.0.1
- * @date 2026-09-18
+ * @version 1.1.2
+ * @date 2026-07-23
  * @license MIT
  * @author Robert Willemelis <github.com/willi84>
  */
@@ -96,13 +96,19 @@ describe('CLASS: FS', () => {
             });
         });
     });
-    describe('🚧 getFileName()', () => {
+    describe('✅ getFileName()', () => {
         const FN = FS.getFileName;
         it('should return the file name from a path', () => {
+            mock({
+                'file.txt': 'xx',
+                'tmp/foo/bar/file.txt': 'xx',
+                'tmp/foo/bar/file': 'xx',
+            });
             expect(FN('file.txt')).toEqual('file.txt');
             expect(FN('')).toEqual('');
             expect(FN('tmp/foo/bar/file.txt')).toEqual('file.txt');
-            expect(FN('tmp/foo/bar/file')).toEqual(''); // TODO: files without extension
+            expect(FN('tmp/foo/bar/file')).toEqual('file');
+            expect(FN('tmp/foo')).toEqual('');
         });
     });
     describe('✅ createFolder()', () => {
@@ -156,11 +162,61 @@ describe('CLASS: FS', () => {
             expect(isExisting(TEST_FOLDER)).toEqual(false);
         });
     });
+    describe('✅ isFile()', () => {
+        const FN = FS.isFile;
+        it('should return true for a file path', () => {
+            mock({
+                'file.txt': 'xx',
+                'tmp/foo/bar/file.txt': 'xx',
+            });
+            expect(FN('file.txt')).toEqual(true);
+            expect(FN('tmp/foo/bar/file.txt')).toEqual(true);
+        });
+        it('should return false for a folder path', () => {
+            expect(FN('tmp/foo/bar/')).toEqual(false);
+            expect(FN('tmp/foo/bar')).toEqual(false);
+        });
+        it('should return true because it is a file', () => {
+            const fileName = 'LICENSE';
+            mock({
+                [fileName]: 'xx',
+                [`tmp/foo/${fileName}`]: 'xx',
+            });
+            expect(FN(fileName)).toEqual(true);
+            expect(FN(`tmp/foo/${fileName}`)).toEqual(true);
+        });
+        it('should return false for an empty path', () => {
+            expect(FN('')).toEqual(false);
+        });
+    });
+    describe('✅ isFolder()', () => {
+        const FN = FS.isFolder;
+        it('should return true for a folder path', () => {
+            mock({
+                'tmp/foo/bar/': {},
+                'tmp/foo/bar': {},
+            });
+            expect(FN('tmp/foo/bar/')).toEqual(true);
+            expect(FN('tmp/foo/bar')).toEqual(true);
+        });
+        it('should return false for a file path', () => {
+            mock({
+                'file.txt': 'xx',
+                'tmp/foo/bar/file.txt': 'xx',
+            });
+            expect(FN('file.txt')).toEqual(false);
+            expect(FN('tmp/foo/bar/file.txt')).toEqual(false);
+        });
+        it('should return true for an empty path', () => {
+            mock({});
+            expect(FN('')).toEqual(true);
+        });
+    });
     describe('✅ getFolder()', () => {
         const TEST_FOLDER: string = 'testFolder';
         const FN = FS.getFolder;
         it('get folder of an existing file', () => {
-            mock({ testFolder: { 'text.md': 'var' } });
+            mock({ [TEST_FOLDER]: { 'text.md': 'var' } });
             expect(isExisting(TEST_FOLDER)).toEqual(true);
             const folder = FN(`${TEST_FOLDER}/text.md`);
             expect(folder).toEqual(TEST_FOLDER);
@@ -172,6 +228,7 @@ describe('CLASS: FS', () => {
             expect(folder).toEqual(EXISTING_FOLDER);
         });
         it('get folder of a non existing file', () => {
+            mock({ notexisting: {} });
             const NON_EXISTING_FILE = 'notexisting/text.md';
             expect(isExisting(NON_EXISTING_FILE)).toEqual(false);
             const folder = FN(NON_EXISTING_FILE);
