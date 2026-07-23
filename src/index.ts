@@ -2,7 +2,7 @@
  * 🎯 A utility class for file system operations, providing methods to manage files and directories.
  * @module backend/_shared/FS
  * @example FS.createFolder('./data');
- * @version 1.1.2
+ * @version 1.2.2
  * @date 2026-07-23
  * @license MIT
  * @author Robert Willemelis <github.com/willi84>
@@ -29,14 +29,24 @@ export enum Status {
 const readFilesRecursively = (
     dir: string,
     fileList: FileItem[],
-    recursive: boolean
+    recursive: boolean,
+    blacklist: string[] = []
 ): FileItem[] => {
+    const IGNORE = blacklist
+        .map((item) => item.trim()) // Trim whitespace from blacklist items
+        .map((item) => item.replace(/\\/g, '/')) // Normalize blacklist paths to use forward slashes
+        .map((item) => (item.endsWith('/') ? item : item + '/')) // Ensure all paths end with a slash
+        .map((item) => item.replace(/\/$/, '')) // Remove trailing slash for comparison
+        .map((item) => item.replace(/^\//, '')); // Remove leading slash for comparison
     const files = fs.readdirSync(dir);
     files.forEach((file: string) => {
         const filePath = path.join(dir, file);
+        if (IGNORE.includes(file)) {
+            return;
+        }
         if (fs.statSync(filePath).isDirectory()) {
             if (recursive === true) {
-                readFilesRecursively(filePath, fileList, recursive);
+                readFilesRecursively(filePath, fileList, recursive, IGNORE);
                 fileList.push({ path: filePath, type: 'folder' });
             }
         } else {
@@ -319,14 +329,25 @@ export class FS {
      * @param {string} path ➡️ The directory path to list files from.
      * @param {boolean} recursive ➡️ If true, lists files recursively from subdirectories (default is true).
      * @param {boolean} fullPath ➡️ If true, returns full file paths; if false, returns only file names (default is true).
+     * @param {string[]} blacklist ➡️ An array of file or folder names to exclude from the listing (default is an empty array).
      * @returns {string[]} 📤 An array of file paths or names, depending on the fullPath option.
      */
-    static list(path: string, recursive = true, fullPath = true): string[] {
+    static list(
+        path: string,
+        recursive = true,
+        fullPath = true,
+        blacklist: string[] = []
+    ): string[] {
         if (!fs.existsSync(path)) {
             LOG.WARN(`[${CI('FS')}] Path ${path} does not exist.`);
             return [];
         }
-        let result: string[] = readFilesRecursively(path, [], recursive)
+        let result: string[] = readFilesRecursively(
+            path,
+            [],
+            recursive,
+            blacklist
+        )
             .filter((file: FileItem) => file.type === 'file')
             .map((file: FileItem) =>
                 fullPath ? file.path : FS.getFileName(file.path)
@@ -338,15 +359,25 @@ export class FS {
      * 🎯 Lists files in a specified directory, with options for recursion.
      * @param {string} path ➡️ The directory path to list files from.
      * @param {boolean} recursive ➡️ If true, lists files recursively from subdirectories (default is true).
+     * @param {string[]} blacklist ➡️ An array of file or folder names to exclude from the listing (default is an empty array).
      * @returns {FileItems} 📤 An array of FileItem objects containing file paths and types.
      * @note This method returns detailed file information, including both files and folders.
      */
-    static listDetails(path: string, recursive = true): FileItems {
+    static listDetails(
+        path: string,
+        recursive = true,
+        blacklist: string[] = []
+    ): FileItems {
         if (!fs.existsSync(path)) {
             LOG.WARN(`[${CI('FS')}] Path ${path} does not exist.`);
             return [];
         }
-        let result: FileItems = readFilesRecursively(path, [], recursive);
+        let result: FileItems = readFilesRecursively(
+            path,
+            [],
+            recursive,
+            blacklist
+        );
 
         return result;
     }

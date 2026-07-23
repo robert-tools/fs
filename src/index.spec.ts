@@ -1,7 +1,7 @@
 /**
  * 🧪 Testing module FS
  * @module backend/_shared/FS
- * @version 1.1.2
+ * @version 1.2.2
  * @date 2026-07-23
  * @license MIT
  * @author Robert Willemelis <github.com/willi84>
@@ -529,6 +529,86 @@ describe('CLASS: FS', () => {
                 expect(FN(`./foo`, false)).toEqual(EXPECTED);
                 expect(FN(`foo/`, false)).toEqual(EXPECTED);
             });
+            it('should return list of files recursively but ignore node_modules with full pathes', () => {
+                mock({
+                    node_modules: {
+                        foobar: {
+                            'file.txt': 'xx',
+                        },
+                    },
+                    src: {
+                        'index.html': 'xx',
+                    },
+                    'README.md': 'yy',
+                });
+                const IGNORE = ['node_modules'];
+                const EXPECTED: string[] = ['README.md', 'src/index.html'];
+                const EXPECTED2: string[] = ['src/index.html'];
+                expect(FN(`./`, true, true, IGNORE)).toEqual(EXPECTED);
+                expect(FN(``, true, true, IGNORE)).toEqual(EXPECTED);
+                expect(FN(`src`, true, true, IGNORE)).toEqual(EXPECTED2);
+                expect(FN(`src/`, true, true, IGNORE)).toEqual(EXPECTED2);
+            });
+            it('should return list of files recursively but ignore node_modules with full pathes', () => {
+                mock({
+                    node_modules: {
+                        foobar: {
+                            'file.txt': 'xx',
+                        },
+                    },
+                    src: {
+                        'index.html': 'xx',
+                    },
+                    'README.md': 'yy',
+                });
+                const IGNORE = ['node_modules/'];
+                const EXPECTED: string[] = ['README.md', 'src/index.html'];
+                const EXPECTED2: string[] = ['src/index.html'];
+                expect(FN(`./`, true, true, IGNORE)).toEqual(EXPECTED);
+                expect(FN(``, true, true, IGNORE)).toEqual(EXPECTED);
+                expect(FN(`src`, true, true, IGNORE)).toEqual(EXPECTED2);
+                expect(FN(`src/`, true, true, IGNORE)).toEqual(EXPECTED2);
+            });
+            it('should return list of files recursively but ignore node_modules with full pathes', () => {
+                mock({
+                    node_modules: {
+                        foobar: {
+                            'file.txt': 'xx',
+                        },
+                    },
+                    src: {
+                        'index.html': 'xx',
+                    },
+                    'README.md': 'yy',
+                });
+                const IGNORE = ['/node_modules ']; // space on purpose
+                const EXPECTED: string[] = ['README.md', 'src/index.html'];
+                const EXPECTED2: string[] = ['src/index.html'];
+                expect(FN(`./`, true, true, IGNORE)).toEqual(EXPECTED);
+                expect(FN(``, true, true, IGNORE)).toEqual(EXPECTED);
+                expect(FN(`src`, true, true, IGNORE)).toEqual(EXPECTED2);
+                expect(FN(`src/`, true, true, IGNORE)).toEqual(EXPECTED2);
+            });
+            it('should return list of files recursively but ignore node_modules with relative pathes', () => {
+                mock({
+                    node_modules: {
+                        foobar: {
+                            'file.txt': 'xx',
+                        },
+                    },
+                    src: {
+                        'index.html': 'xx',
+                    },
+                    'README.md': 'yy',
+                });
+                const IGNORE = ['node_modules'];
+                const EXPECTED: string[] = ['README.md', 'index.html'];
+                const EXPECTED2: string[] = ['index.html'];
+                expect(FN(`./`, true, false, IGNORE)).toEqual(EXPECTED);
+                expect(FN(``, true, false, IGNORE)).toEqual(EXPECTED);
+                expect(FN(`src`, true, false, IGNORE)).toEqual(EXPECTED2);
+                expect(FN(`src/`, true, false, IGNORE)).toEqual(EXPECTED2);
+            });
         });
 
         describe('should return empty list of files', () => {
@@ -587,6 +667,18 @@ describe('CLASS: FS', () => {
                 ];
                 expect(FN(`tmp`)).toEqual(EXPECTED);
                 expect(FN(`tmp/`)).toEqual(EXPECTED);
+            });
+            it('from sub-folder [absolute path, recursive=true]', () => {
+                const blacklist = ['tmp'];
+                const EXPECTED: FileItems = [
+                    { path: 'foo/bar/file.txt', type: 'file' },
+                    { path: 'foo/bar', type: 'folder' },
+                    { path: 'foo/file.txt', type: 'file' },
+                    { path: 'foo', type: 'folder' },
+                    { path: 'tmpEmpty', type: 'folder' },
+                ];
+                expect(FN(`.`, true, blacklist)).toEqual(EXPECTED);
+                expect(FN(`./`, true, blacklist)).toEqual(EXPECTED);
             });
             it('from sub-folder with sub-folder [absolute path, recursive=true]', () => {
                 const EXPECTED: FileItems = [

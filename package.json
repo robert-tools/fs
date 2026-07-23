@@ -1,6 +1,6 @@
 {
     "name": "@robert.tools/fs",
-    "version": "1.1.2",
+    "version": "1.2.2",
     "description": "A package to provide tooling for interactions with the file system.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
