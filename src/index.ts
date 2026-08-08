@@ -241,22 +241,19 @@ export class FS {
     /**
      * 🎯 Reads the content of a file at the specified path.
      * @param {string} path
-     * @param options ➡️ Options for reading the file. Supported options:
+     * @param opts ➡️ Options for reading the file. Supported options:
      *                  - encoding: The encoding to use (default is 'utf8').
      *                  - returnType: 'string' (default) returns the content as a string, 'json' parses the content as JSON.
      * @returns {string | object | undefined} 📤 The content of the file as a string or parsed JSON object.
      */
-    static readFile(
-        path: string,
-        options: any = {}
-    ): string | object | undefined {
+    static readFile(path: string, opts: any = {}): string | object | undefined {
         let data;
-        options['encoding'] = 'utf8';
+        opts['encoding'] = 'utf8';
 
         try {
             const isJSON = path.indexOf('.json') !== -1;
             const fileStream = fs.readFileSync(path);
-            const returnType = options['returnType'] ?? 'string';
+            const returnType = opts['returnType'] ?? 'string';
             // const noFixJSON = options['noFixJSON'] ?? false;
             const str = fileStream.toString();
             if (isJSON) {
@@ -272,6 +269,21 @@ export class FS {
             LOG.FAIL(`[${CI('FS')}] readFile: ${error}`);
         }
         return data;
+    }
+
+    /**
+     * 🎯 Reads the content of a JSON file.
+     * @param {string} path
+     * @param options ➡️ Options for reading the file.
+     * @returns {string | object | undefined} 📤 The content of the file as a string or parsed JSON object.
+     */
+    static readJSON(path: string, opts: any = {}): object {
+        const options = { ...opts, returnType: 'json' };
+        const data = FS.readFile(path, options);
+        if (!data) {
+            return { error: `File not found: ${path}` };
+        }
+        return data as object;
     }
 
     /**

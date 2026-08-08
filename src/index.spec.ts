@@ -384,6 +384,17 @@ describe('CLASS: FS', () => {
             spyLog.mockRestore();
         });
     });
+    describe('✅ readJSON()', () => {
+        const FN = FS.readJSON;
+        it('should read a JSON file and parse it', () => {
+            const content = FN('tmp/file.json', { returnType: 'json' });
+            expect(content).toEqual({ xxx: 2 });
+        });
+        it('should return an error for a non-existing JSON file', () => {
+            const content = FN('unknown.json', { returnType: 'json' });
+            expect(content).toEqual({ error: 'File not found: unknown.json' });
+        });
+    });
     describe('🚧 writeFile', () => {
         const FILE = `tmp/CREATE_FILE.txt`;
         let currentFileContent: string | any = null;
