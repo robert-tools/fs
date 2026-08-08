@@ -1,8 +1,8 @@
 /**
  * 🧩 types for FS
  * @module backend/_shared/FS
- * @version 0.0.1
- * @date 2026-09-18
+ * @version 1.3.0
+ * @date 2026-08-08
  * @license MIT
  * @author Robert Willemelis <github.com/willi84>
  */

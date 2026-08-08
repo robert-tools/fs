@@ -2,8 +2,8 @@
  * 🎯 A utility class for file system operations, providing methods to manage files and directories.
  * @module backend/_shared/FS
  * @example FS.createFolder('./data');
- * @version 1.2.2
- * @date 2026-07-23
+ * @version 1.3.0
+ * @date 2026-08-08
  * @license MIT
  * @author Robert Willemelis <github.com/willi84>
  */
